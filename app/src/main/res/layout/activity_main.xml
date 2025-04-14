@@ -7,149 +7,211 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <Space
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="12dp" />
+            android:layout_height="wrap_content"
+            android:foregroundGravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="100dp">
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="65dp" />
 
-            <LinearLayout
-                android:layout_width="318dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="323dp"
                 android:layout_height="100dp"
-                android:gravity="center|center_horizontal"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="123dp"
-                    android:layout_height="100dp"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/vibecheckicon" />
+                android:layout_gravity="center_horizontal"
+                android:foregroundGravity="center_horizontal">
 
                 <LinearLayout
-                    android:layout_width="204dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    android:layout_width="318dp"
+                    android:layout_height="100dp"
+                    android:gravity="center|center_horizontal"
+                    android:orientation="horizontal">
 
-                    <Space
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:id="@+id/textView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="27dp"
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="123dp"
+                        android:layout_height="100dp"
                         android:layout_weight="1"
-                        android:fontFamily="sans-serif-smallcaps"
-                        android:text="Vibe Check"
-                        android:textColor="#2E86C1"
-                        android:textSize="40dp"
-                        android:textStyle="bold" />
+                        app:srcCompat="@drawable/vibecheckicon" />
 
-                    <TextView
-                        android:id="@+id/textView2"
-                        android:layout_width="153dp"
-                        android:layout_height="10dp"
+                    <LinearLayout
+                        android:layout_width="204dp"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="Organizador"
-                        android:textAlignment="center"
-                        android:textColor="#26187c"
-                        android:textSize="20dp"
-                        android:textStyle="bold" />
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-                    <Space
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="27dp"
+                            android:layout_weight="1"
+                            android:fontFamily="sans-serif-smallcaps"
+                            android:text="Vibe Check"
+                            android:textColor="#2E86C1"
+                            android:textSize="40dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textView2"
+                            android:layout_width="153dp"
+                            android:layout_height="10dp"
+                            android:layout_weight="1"
+                            android:text="Organizador"
+                            android:textAlignment="center"
+                            android:textColor="#26187c"
+                            android:textSize="20dp"
+                            android:textStyle="bold" />
+
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:text="Bem vindo ao VIbe Check Organizador! Aqui vocÊ poderá criar eventos e controlar as pessoas autorizadas a entrar nele, de uma maniera completamente automática, rápida e prática!"
+                    android:textAlignment="center"
+                    android:textColor="@color/black" />
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/textView9"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:text="Insira as informações necessárias:"
+                        android:textAlignment="center"
+                        android:textColor="#26187B"
+                        android:textStyle="bold" />
+
+                    <RadioButton
+                        android:id="@+id/radioButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:buttonTint="#ADFF2F"
+                        android:checked="true"
+                        android:text="Sou pessoa física" />
+
+                    <RadioButton
+                        android:id="@+id/radioButton2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="#ADFF2F"
+                        android:text="Sou pessoa jurídica" />
+
+                </RadioGroup>
+
+                <EditText
+                    android:id="@+id/editTextText"
+                    android:layout_width="match_parent"
+                    android:layout_height="43dp"
+                    android:layout_marginBottom="10dp"
+                    android:height="30dp"
+                    android:background="@drawable/input_shape"
+                    android:ems="10"
+                    android:hint="Nome completo"
+                    android:inputType="text"
+                    android:padding="5dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="#58FFFFFF" />
+
+                <EditText
+                    android:id="@+id/editTextText5"
+                    android:layout_width="match_parent"
+                    android:layout_height="43dp"
+                    android:layout_marginBottom="10dp"
+                    android:height="30dp"
+                    android:background="@drawable/input_shape"
+                    android:ems="10"
+                    android:hint="CPF"
+                    android:inputType="text"
+                    android:padding="5dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="#58FFFFFF" />
+
+                <EditText
+                    android:id="@+id/editTextText6"
+                    android:layout_width="match_parent"
+                    android:layout_height="43dp"
+                    android:layout_marginBottom="10dp"
+                    android:height="30dp"
+                    android:background="@drawable/input_shape"
+                    android:ems="10"
+                    android:hint="Email"
+                    android:inputType="text"
+                    android:padding="5dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="#58FFFFFF" />
+
+                <EditText
+                    android:id="@+id/editTextText2"
+                    android:layout_width="match_parent"
+                    android:layout_height="43dp"
+                    android:layout_marginBottom="10dp"
+                    android:height="30dp"
+                    android:background="@drawable/input_shape"
+                    android:ems="10"
+                    android:hint="Senha"
+                    android:inputType="text"
+                    android:padding="5dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="#58FFFFFF" />
+
+                <Button
+                    android:id="@+id/button2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_shape"
+                    android:text="Cadastrar-se"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Já tem conta ? Entrar"
+                    android:textAlignment="center"
+                    android:textColor="#FF10F0"
+                    android:textStyle="bold" />
             </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
-
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="100dp">
-
-            <RadioButton
-                android:id="@+id/radioButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="RadioButton"
-                android:buttonTint="#ADFF2F"/>
-
-            <RadioButton
-                android:id="@+id/radioButton2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="RadioButton"
-                android:buttonTint="#ADFF2F" />
-        </RadioGroup>
-
-        <EditText
-            android:id="@+id/editTextText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            />
-
-        <EditText
-            android:id="@+id/editTextText4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:text="Name" />
-
-        <EditText
-            android:id="@+id/editTextText2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:text="Name" />
-
-        <EditText
-            android:id="@+id/editTextText3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:text="Name" />
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Button" />
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="41dp" />
-
-    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
