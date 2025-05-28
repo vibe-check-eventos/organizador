@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".Login">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -85,83 +85,22 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="104dp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="201dp"
                 android:layout_margin="10dp"
                 android:orientation="vertical">
-
-                <RadioGroup
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="10dp"
-                    android:gravity="center_horizontal">
-
-                    <TextView
-                        android:id="@+id/textView9"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:text="Insira as informações necessárias:"
-                        android:textAlignment="center"
-                        android:textColor="#26187B"
-                        android:textStyle="bold" />
-
-                    <RadioButton
-                        android:id="@+id/radioButtonPerson"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:buttonTint="#ADFF2F"
-                        android:checked="true"
-                        android:onClick="showWhichDataForm"
-                        android:text="Sou pessoa física" />
-
-                    <RadioButton
-                        android:id="@+id/radioButtonLegal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:buttonTint="#ADFF2F"
-                        android:onClick="showWhichDataForm"
-                        android:text="Sou pessoa jurídica" />
-
-                </RadioGroup>
 
                 <LinearLayout
                     android:id="@+id/lnlyNaturalPerson"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:visibility="visible">
-
-                    <EditText
-                        android:id="@+id/editPersonName"
-                        android:layout_width="match_parent"
-                        android:layout_height="43dp"
-                        android:layout_marginBottom="10dp"
-                        android:height="30dp"
-                        android:background="@drawable/input_shape"
-                        android:ems="10"
-                        android:hint="Nome completo"
-                        android:inputType="text"
-                        android:padding="10dp"
-                        android:textColor="@color/white"
-                        android:textColorHint="#58FFFFFF" />
-
-                    <EditText
-                        android:id="@+id/editPersonDocument"
-                        android:layout_width="match_parent"
-                        android:layout_height="43dp"
-                        android:layout_marginBottom="10dp"
-                        android:height="30dp"
-                        android:background="@drawable/input_shape"
-                        android:ems="10"
-                        android:hint="CPF"
-                        android:inputType="text"
-                        android:padding="10dp"
-                        android:textColor="@color/white"
-                        android:textColorHint="#58FFFFFF" />
 
                     <EditText
                         android:id="@+id/edtLoginEmail"
@@ -262,21 +201,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/button_shape"
-                    android:onClick="registerEntity"
-                    android:text="Cadastrar-se"
+                    android:onClick="loginEntity"
+                    android:text="Entrar"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/linkToLogin"
+                    android:id="@+id/linkToRegister"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:onClick="sendToLoginForm"
-                    android:text="Já tem conta ? Entrar"
+                    android:onClick="sendToRegisterForm"
+                    android:text="Não tem conta ? Cadastre-se"
                     android:textAlignment="center"
                     android:textColor="#FF10F0"
                     android:textStyle="bold|italic" />
+
             </LinearLayout>
 
         </LinearLayout>

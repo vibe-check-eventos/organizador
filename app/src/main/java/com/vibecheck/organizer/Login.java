@@ -6,10 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,127 +26,72 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class Login extends AppCompatActivity {
 
-    private EditText personName, personDocument, personEmail, personPassword;
-    private EditText companyName, companyDocument, companyEmail, companyPassword;
-    private Button btnRegister;
-    private TextView textGoToRegister;
-    private LinearLayout personForm, legalForm;
-    private RadioButton rdNaturalPerson, rdLegalPerson;
+    private EditText email, password;
+    private TextView txtLinkToRegister;
     private ApiService apiService;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        this.personName = findViewById(R.id.editPersonName);
-        this.personEmail = findViewById(R.id.edtLoginEmail);
-        this.personDocument = findViewById(R.id.editPersonDocument);
-        this.personPassword = findViewById(R.id.edtLoginPassword);
+        email = findViewById(R.id.edtLoginEmail);
+        password = findViewById(R.id.edtLoginPassword);
 
-        this.companyName = findViewById(R.id.editCompanyName);
-        this.companyEmail = findViewById(R.id.editCompanyEmail);
-        this.companyDocument = findViewById(R.id.editCompanyDocument);
-        this.companyPassword = findViewById(R.id.editCompanyPassword);
-
-        this.btnRegister = findViewById(R.id.btnLogin);
-
-        this.textGoToRegister = findViewById(R.id.linkToLogin);
-
-        this.personForm = findViewById(R.id.lnlyNaturalPerson);
-        this.legalForm = findViewById(R.id.lnlyLegalPerson);
-
-        this.rdLegalPerson = findViewById(R.id.radioButtonLegal);
-        this.rdNaturalPerson = findViewById(R.id.radioButtonPerson);
+        txtLinkToRegister = findViewById(R.id.linkToRegister);
 
         apiService = new ApiService(ContextCompat.getMainExecutor(this));
 
     }
 
-    public void showWhichDataForm(View view){
+    public void sendToRegisterForm(View view){
 
-        int personTypeRadioBtnId = view.getId();
-
-        if (personTypeRadioBtnId == R.id.radioButtonPerson){
-
-            this.personForm.setVisibility(View.VISIBLE);
-            this.legalForm.setVisibility(View.GONE);
-
-        } else if (personTypeRadioBtnId == R.id.radioButtonLegal) {
-
-            this.personForm.setVisibility(View.GONE);
-            this.legalForm.setVisibility(View.VISIBLE);
-
-        }
+        finish();
 
     }
 
-    public void sendToLoginForm(View view){
-
-        Intent i = new Intent(this.getApplicationContext(), Login.class);
-
-        startActivity(i);
-
-    }
-
-    public void registerEntity(View view) { // Remova 'throws JsonProcessingException' daqui
+    public void loginEntity(View view) { // Remova 'throws JsonProcessingException' daqui
         Map<String, Object> jsonMap = new HashMap<>();
 
-        // 1. Coletar dados da UI e construir o Map
-        boolean isNaturalPerson = this.rdNaturalPerson.isChecked(); // Melhor nome de variável
+        jsonMap.put("email", email.getText().toString());
+        jsonMap.put("password", password.getText().toString());
 
-        if (isNaturalPerson) { // Pessoa Física
-            jsonMap.put("organizer_type", 1);//true - para pessoa
-            jsonMap.put("full_name", personName.getText().toString());
-            jsonMap.put("cpf", personDocument.getText().toString());
-            jsonMap.put("email", personEmail.getText().toString());
-            jsonMap.put("password", personPassword.getText().toString());
-        } else { // Pessoa Jurídica
-            jsonMap.put("organizer_type", 0); //false - para empresa
-            jsonMap.put("company_name", companyName.getText().toString());
-            jsonMap.put("legal_name", companyName.getText().toString()); // Pode ser diferente de companyName
-            jsonMap.put("full_name", companyName.getText().toString()); // Quem representa a empresa?
-            jsonMap.put("cnpj", companyDocument.getText().toString());
-            jsonMap.put("email", companyEmail.getText().toString());
-            jsonMap.put("password", companyPassword.getText().toString());
-        }
 
         String jsonString;
         try {
             // 2. Converter Map para String JSON
             jsonString = new ObjectMapper().writeValueAsString(jsonMap);
-            Log.d("Register", "JSON a ser enviado: " + jsonString);
+            Log.d("Login", "JSON a ser enviado: " + jsonString);
         } catch (JsonProcessingException e) {
-            Log.e("Register", "Erro ao converter Map para JSON: " + e.getMessage());
+            Log.e("Login", "Erro ao converter Map para JSON: " + e.getMessage());
             Toast.makeText(this, "Erro interno ao preparar dados.", Toast.LENGTH_SHORT).show();
             return; // Sai do método se o JSON não puder ser gerado
         }
 
         // 3. Chamar a requisição POST assíncrona
-        String registerUrl = "https://3e46-179-119-53-133.ngrok-free.app/api/organizers"; // <-- Defina a URL CORRETA aqui!
+        String loginUrl = "https://3e46-179-119-53-133.ngrok-free.app/api/organizers/login"; // <-- Defina a URL CORRETA aqui!
 
-        apiService.post(registerUrl, jsonString, new ApiService.ApiResponseCallback() {
+        apiService.post(loginUrl, jsonString, new ApiService.ApiResponseCallback() {
             @Override
             public void onSuccess(String responseBody) {
                 // Código será executado na UI Thread por causa do runOnUiThread() no ApiService
-                Log.d("Register", "Sucesso no registro: " + responseBody);
-                Toast.makeText(MainActivity.this, "Registro realizado com sucesso!", Toast.LENGTH_LONG).show();
+                Log.d("Login", "Sucesso no login: " + responseBody);
+                Toast.makeText(Login.this, "Login realizado com sucesso!", Toast.LENGTH_LONG).show();
 
                 ObjectMapper localMapper = new ObjectMapper();
                 try {
                     Map<String, Object> responseMap = localMapper.readValue(responseBody, new TypeReference<Map<String, Object>>() {});
 
-                    clearAllUserData(MainActivity.this);
+                    clearAllUserData(Login.this);
 
                     // Obter uma instância do SharedPreferences
                     // "user_data" é o nome do arquivo XML onde os dados serão salvos
@@ -185,11 +127,6 @@ public class MainActivity extends AppCompatActivity {
                     if (responseMap.containsKey("email")) {
                         editor.putString("email", (String) responseMap.get("email"));
                     }
-                    // Geralmente NÃO se salva a senha diretamente no SharedPreferences por segurança.
-                    // Se precisar de autenticação persistente, é melhor salvar um token de autenticação.
-                    // if (responseMap.containsKey("password")) {
-                    //     editor.putString("password", (String) responseMap.get("password"));
-                    // }
                     if (responseMap.containsKey("updated_at")) {
                         editor.putString("updated_at", (String) responseMap.get("updated_at"));
                     }
@@ -206,24 +143,23 @@ public class MainActivity extends AppCompatActivity {
                     editor.apply();
 
                     Log.d("SharedPreferences", "Dados do usuário salvos em user_data.xml");
-                    Toast.makeText(MainActivity.this, "Dados do usuário salvos!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, "Usuário entrou!", Toast.LENGTH_SHORT).show();
 
                     // --- ADIÇÃO PARA NAVEGAR PARA ListEventsActivity ---
-                    Intent intent = new Intent(MainActivity.this, ListEvents.class);
+                    Intent intent = new Intent(Login.this, ListEvents.class);
                     startActivity(intent);
-                    finish(); // Opcional: Finaliza a MainActivity para que o usuário não possa voltar a ela com o botão "Voltar"
-                    // --- FIM DA ADIÇÃO ---
+
 
                 } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-                    Log.e("Register", "Erro ao parsear resposta JSON de sucesso: " + e.getMessage(), e);
-                    Toast.makeText(MainActivity.this, "Erro interno: Não foi possível processar a resposta do servidor.", Toast.LENGTH_LONG).show();
+                    Log.e("Login", "Erro ao parsear resposta JSON de sucesso: " + e.getMessage(), e);
+                    Toast.makeText(Login.this, "Erro interno: Não foi possível processar a resposta do servidor.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onError(int statusCode, String errorMessage) {
                 // Código será executado na UI Thread
-                Log.e("Register", "Erro no registro: Status " + statusCode + ", Mensagem: " + errorMessage);
+                Log.e("Login", "Erro no login: Status " + statusCode + ", Mensagem: " + errorMessage);
 
                 if (errorMessage != null && !errorMessage.isEmpty()) {
 
@@ -232,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         Map<String, Object> errorMap = errorMapper.readValue(errorMessage, new TypeReference<Map<String, Object>>() {});
 
-                        Toast.makeText(MainActivity.this, errorMap.get("message").toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Login.this, errorMap.get("message").toString(), Toast.LENGTH_SHORT).show();
 
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
@@ -246,8 +182,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(IOException e) {
                 // Código será executado na UI Thread
-                Log.e("Register", "Falha de rede no registro: " + e.getMessage(), e);
-                Toast.makeText(MainActivity.this, "Erro de conexão: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e("Login", "Falha de rede no login: " + e.getMessage(), e);
+                Toast.makeText(Login.this, "Erro de conexão: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -269,6 +205,5 @@ public class MainActivity extends AppCompatActivity {
         // Aplica as mudanças de forma assíncrona (não bloqueia a UI).
         editor.apply();
     }
-
 
 }
