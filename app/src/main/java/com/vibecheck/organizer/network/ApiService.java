@@ -108,4 +108,41 @@ public class ApiService {
             }
         });
     }
+
+    // Método assíncrono para PUT
+    public void put(String url, String json, ApiResponseCallback callback) {
+        RequestBody body = RequestBody.create(json, JSON_MEDIA_TYPE);
+        Request request = new Request.Builder()
+                .url(url)
+                .put(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callbackExecutor.execute(() -> callback.onFailure(e));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try (response) {
+                    String responseBody = null;
+                    if (response.body() != null) {
+                        responseBody = response.body().string();
+                    }
+
+                    if (response.isSuccessful()) {
+                        final String finalResponseBody = responseBody;
+                        callbackExecutor.execute(() -> callback.onSuccess(finalResponseBody != null ? finalResponseBody : ""));
+                    } else {
+                        final String finalResponseBody = responseBody;
+                        callbackExecutor.execute(() -> callback.onError(response.code(), finalResponseBody != null ? finalResponseBody : response.message()));
+                    }
+                } catch (IOException e) {
+                    callbackExecutor.execute(() -> callback.onFailure(e));
+                }
+            }
+        });
+    }
+
 }

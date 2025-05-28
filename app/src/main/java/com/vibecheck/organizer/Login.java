@@ -44,6 +44,18 @@ public class Login extends AppCompatActivity {
             return insets;
         });
 
+        //verificar se usuário já está logado
+        SharedPreferences sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
+        if (sharedPreferences.contains("id")) {
+            Log.d("MainActivity", "User ID found in SharedPreferences. Redirecting to ListEvents.");
+            Intent intent = new Intent(this, ListEvents.class);
+            // Use FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_CLEAR_TASK to prevent going back
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish(); // Finish MainActivity so it's removed from the back stack
+            return; // Stop further execution of onCreate
+        }
+
         email = findViewById(R.id.edtLoginEmail);
         password = findViewById(R.id.edtLoginPassword);
 
@@ -147,6 +159,7 @@ public class Login extends AppCompatActivity {
 
                     // --- ADIÇÃO PARA NAVEGAR PARA ListEventsActivity ---
                     Intent intent = new Intent(Login.this, ListEvents.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
 
 

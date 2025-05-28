@@ -1,10 +1,12 @@
 package com.vibecheck.organizer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -19,13 +21,11 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vibecheck.organizer.network.ApiService;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,9 +53,48 @@ public class ListEvents extends AppCompatActivity {
 
         this.apiService = new ApiService(ContextCompat.getMainExecutor(this));
         this.lvEvents = findViewById(R.id.lvEvents);
-        this.txtLoading = findViewById(R.id.txtLoading);
+        this.txtLoading = findViewById(R.id.txtLoadingParticipants);
 
         loadEventsData();
+
+        //ao clicar em um evento
+        this.lvEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                String eventoSelecionado = (String) adapterView.getItemAtPosition(i);
+
+                String id = "";
+                String nome = "";
+                String capacidade = "";
+                String endereco = "";
+                String data = "";
+
+                for (String linha : eventoSelecionado.split("\n")) {
+                    if (linha.startsWith("ID:")) {
+                        id = linha.substring(linha.indexOf(":") + 1).trim();
+                    } else if (linha.startsWith("Nome:")) {
+                        nome = linha.substring(linha.indexOf(":") + 1).trim();
+                    } else if (linha.startsWith("Capacidade:")) {
+                        capacidade = linha.substring(linha.indexOf(":") + 1).trim();
+                    } else if (linha.startsWith("Endereço:")) {
+                        endereco = linha.substring(linha.indexOf(":") + 1).trim();
+                    } else if (linha.startsWith("Data:")) {
+                        data = linha.substring(linha.indexOf(":") + 1).trim();
+                    }
+                }
+
+                Intent in = new Intent(getApplicationContext(), Event.class);
+
+                in.putExtra("id", id);
+                in.putExtra("nome", nome);
+                in.putExtra("capacidade", capacidade);
+                in.putExtra("endereco", endereco);
+                in.putExtra("data", data);
+
+                startActivity(in);
+            }
+        });
 
     }
 
@@ -117,6 +156,8 @@ public class ListEvents extends AppCompatActivity {
 
                     // Iterate over the rawEventsList and format each item into a single string
                     for (Map<String, Object> eventMap : rawEventsList) {
+
+                        Integer id = (Integer) eventMap.get("id");
                         String name = (String) eventMap.get("name");
                         Object capacityObj = eventMap.get("capacity");
                         String capacity = (capacityObj != null) ? String.valueOf(capacityObj) : "N/A";
@@ -146,7 +187,9 @@ public class ListEvents extends AppCompatActivity {
                             date = createdAt.substring(0, 10);
                         }
 
-                        String itemText = "Nome: " + (name != null ? name : "N/A") + "\n" +
+                        String itemText =
+                                "ID: " + (id != null ? String.valueOf(id) : "N/A") + "\n" +
+                                "Nome: " + (name != null ? name : "N/A") + "\n" +
                                 "Capacidade: " + capacity + "\n" +
                                 "Endereço: " + address + "\n" +
                                 "Data: " + date;
@@ -208,4 +251,36 @@ public class ListEvents extends AppCompatActivity {
 
     }
 
+    public void signOut(View view){
+
+        clearAllUserData(ListEvents.this);
+
+        Intent intent = new Intent(this, MainActivity.class);
+        // Use FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_CLEAR_TASK to prevent going back
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+
+    }
+
+    public void linkToProfile(View view){
+        Intent intent = new Intent(this, Profile.class);
+        startActivity(intent);
+    }
+
+    public static void clearAllUserData(Context context) {
+        // Define o nome do arquivo de SharedPreferences
+        final String PREF_NAME = "user_data";
+
+        // Obtém o SharedPreferences. O Context é necessário para isso.
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+
+        // Obtém um editor para modificar os dados.
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // Limpa todos os dados.
+        editor.clear();
+
+        // Aplica as mudanças de forma assíncrona (não bloqueia a UI).
+        editor.apply();
+    }
 }
