@@ -183,9 +183,7 @@ public class Event extends AppCompatActivity {
             String state = eventAddress.get("state") != null ? eventAddress.get("state").toString() : "";
             String zip = eventAddress.get("zip_code") != null ? eventAddress.get("zip_code").toString() : "";
 
-            endereco = street + ", " + number;
-            if (!complement.isEmpty()) endereco += " - " + complement;
-            endereco += ", " + city + " - " + state + ", " + zip;
+            endereco = street ;
         }
 
         // Descrição

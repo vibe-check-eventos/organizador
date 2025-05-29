@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreateEvent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center_horizontal">
+
+            <!-- Título -->
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="150dp" />
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:id="@+id/tittle"
+                android:text="Criar Evento"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#007ACC"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center"/>
+
+            <!-- Campos de entrada -->
+            <EditText
+                android:id="@+id/etNomeEvento"
+                android:hint="Nome do evento"
+                android:background="@drawable/input_shape"
+                android:padding="12dp"
+                android:textColorHint="#D3D3D3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColor="#ffffff" />
+
+            <EditText
+                android:id="@+id/etDataEvento"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/input_shape"
+                android:hint="Data (dd/mm/aaaa hh:ss)"
+                android:padding="12dp"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff" />
+
+            <EditText
+                android:id="@+id/etLocalEvento"
+                android:hint="Local"
+                android:background="@drawable/input_shape"
+                android:padding="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff"/>
+
+            <EditText
+                android:id="@+id/etDescricao"
+                android:hint="Descrição"
+                android:background="@drawable/input_shape"
+                android:padding="12dp"
+                android:minLines="4"
+                android:gravity="top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff"/>
+
+            <!-- Botão -->
+            <Button
+                android:id="@+id/btnCadastrarEvento"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/button_shape"
+                android:backgroundTint="#CCFF00"
+                android:onClick="criarEvento"
+                android:text="CADASTRAR EVENTO"
+                android:textColor="#FFFFFF" />
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -190,7 +190,7 @@ public class ListEvents extends AppCompatActivity {
                         String itemText =
                                 "ID: " + (id != null ? String.valueOf(id) : "N/A") + "\n" +
                                 "Nome: " + (name != null ? name : "N/A") + "\n" +
-                                "Capacidade: " + capacity + "\n" +
+                                //"Capacidade: " + capacity + "\n" +
                                 "Endereço: " + address + "\n" +
                                 "Data: " + date;
 
@@ -259,6 +259,22 @@ public class ListEvents extends AppCompatActivity {
         // Use FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_CLEAR_TASK to prevent going back
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+
+    }
+
+    public void linkToCreateEvent(View view){
+
+        Intent i = new Intent(ListEvents.this, CreateEvent.class);
+
+        startActivity(i);
+
+    }
+
+    public void linkToQRCode(View view){
+
+        Intent i = new Intent(ListEvents.this, QrCodeScannerActivity.class);
+
+        startActivity(i);
 
     }
 
