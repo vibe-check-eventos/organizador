@@ -1,8 +1,10 @@
 package com.vibecheck.organizer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -20,6 +22,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vibecheck.organizer.network.ApiService;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +64,37 @@ public class Event extends AppCompatActivity {
 
         // Continua carregando participantes
         loadParticipantsData();
+
+        // ao clicar em algum participante
+        ListView list = findViewById(R.id.lvParticipantsEvent);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String participanteSelecionado = (String) adapterView.getItemAtPosition(position);
+                String registrationId = "";
+
+                // Extrair o ID da string (Ex: "ID do Ingresso: 10")
+                for (String linha : participanteSelecionado.split("\n")) {
+                    if (linha.contains("ID do Ingresso")) {
+                        String[] partes = linha.split(":");
+                        if (partes.length > 1) {
+                            registrationId = partes[1].trim();
+                        }
+                        break; // encontrou, pode sair do loop
+                    }
+                }
+
+                // Criar o Intent e passar o ID como extra
+                Intent intent = new Intent(getApplicationContext(), Checkins.class);
+
+                int registrationIdInt = Integer.parseInt(registrationId);
+                intent.putExtra("registration_id", registrationIdInt);
+
+                // Iniciar a Checkins Activity
+                startActivity(intent);
+            }
+        });
+
 
     }
 
@@ -105,6 +142,7 @@ public class Event extends AppCompatActivity {
             public void onSuccess(String responseBody) {
                 Log.d("UpdateEvent", "Evento atualizado com sucesso: " + responseBody);
                 runOnUiThread(() -> Toast.makeText(Event.this, "Evento atualizado com sucesso!", Toast.LENGTH_SHORT).show());
+                finish();
             }
 
             @Override
@@ -190,7 +228,7 @@ public class Event extends AppCompatActivity {
         String description = eventData.get("description") != null ? eventData.get("description").toString() : "";
 
         edtEventName.setText(nome);
-        edtEventData.setText(data);
+        edtEventData.setText(convertIsoToDdMmYyyyHhSs(data));
         edtEventLocal.setText(endereco);
         edtEventDescription.setText(description);
     }
@@ -212,6 +250,7 @@ public class Event extends AppCompatActivity {
 
             @Override
             public void onSuccess(String responseBody) {
+                //NA VERDADE TUDO AQUI É O INGRESSO
                 Log.d("Participants Body:", responseBody);
 
                 findViewById(R.id.txtLoadingParticipants).setVisibility(View.GONE);
@@ -231,13 +270,18 @@ public class Event extends AppCompatActivity {
                     List<Map<String, Object>> rawParticipantsList = objectMapper.readValue(responseBody, new TypeReference<List<Map<String, Object>>>() {});
 
                     for (Map<String, Object> registrationMap : rawParticipantsList) {
+
+                        String registrationId = registrationMap.get("id") != null ? registrationMap.get("id").toString() : "N/A";
+
                         Map<String, Object> participantMap = (Map<String, Object>) registrationMap.get("participant");
 
                         String id = participantMap.get("id") != null ? participantMap.get("id").toString() : "N/A";
                         String name = participantMap.get("name") != null ? participantMap.get("name").toString() : "N/A";
                         String email = participantMap.get("email") != null ? participantMap.get("email").toString() : "N/A";
 
-                        String itemText = "ID: " + id + "\n" +
+                        String itemText =
+                                "ID do Ingresso: " + registrationId + "\n" +
+                                "ID: " + id + "\n" +
                                 "Nome: " + name + "\n" +
                                 "Email: " + email;
 
@@ -277,6 +321,21 @@ public class Event extends AppCompatActivity {
         });
     }
 
+    public static String convertIsoToDdMmYyyyHhSs(String isoDateTime) {
+        // 1. Parse o String ISO 8601 para um Instant
+        Instant instant = Instant.parse(isoDateTime);
 
+        // 2. Converta o Instant para LocalDateTime no fuso horário desejado.
+        //    Se você quiser o horário local do dispositivo, use ZoneId.systemDefault().
+        //    Se você quiser uma representação no fuso horário de São Paulo, use "America/Sao_Paulo".
+        ZoneId zoneId = ZoneId.of("America/Sao_Paulo"); // Ou ZoneId.systemDefault();
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);
+
+        // 3. Defina o formato de saída
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"); // Note HH para 24h, hh para 12h AM/PM
+
+        // 4. Formate o LocalDateTime para o String desejado
+        return localDateTime.format(formatter);
+    }
 
 }

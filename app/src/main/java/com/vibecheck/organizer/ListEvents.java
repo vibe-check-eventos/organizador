@@ -25,6 +25,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vibecheck.organizer.network.ApiService;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -95,6 +99,8 @@ public class ListEvents extends AppCompatActivity {
                 startActivity(in);
             }
         });
+
+
 
     }
 
@@ -181,18 +187,13 @@ public class ListEvents extends AppCompatActivity {
                         }
 
                         String createdAt = (String) eventMap.get("created_at");
-                        String date = "Data Indisponível";
-                        if (createdAt != null && createdAt.length() >= 10) {
-                            // Extract just the date part (YYYY-MM-DD)
-                            date = createdAt.substring(0, 10);
-                        }
 
                         String itemText =
                                 "ID: " + (id != null ? String.valueOf(id) : "N/A") + "\n" +
                                 "Nome: " + (name != null ? name : "N/A") + "\n" +
                                 //"Capacidade: " + capacity + "\n" +
                                 "Endereço: " + address + "\n" +
-                                "Data: " + date;
+                                "Data: " + convertIsoToDdMmYyyyHhSs(createdAt);
 
                         dadosFormatados.add(itemText);
                     }
@@ -298,5 +299,22 @@ public class ListEvents extends AppCompatActivity {
 
         // Aplica as mudanças de forma assíncrona (não bloqueia a UI).
         editor.apply();
+    }
+
+    public static String convertIsoToDdMmYyyyHhSs(String isoDateTime) {
+        // 1. Parse o String ISO 8601 para um Instant
+        Instant instant = Instant.parse(isoDateTime);
+
+        // 2. Converta o Instant para LocalDateTime no fuso horário desejado.
+        //    Se você quiser o horário local do dispositivo, use ZoneId.systemDefault().
+        //    Se você quiser uma representação no fuso horário de São Paulo, use "America/Sao_Paulo".
+        ZoneId zoneId = ZoneId.of("America/Sao_Paulo"); // Ou ZoneId.systemDefault();
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);
+
+        // 3. Defina o formato de saída
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"); // Note HH para 24h, hh para 12h AM/PM
+
+        // 4. Formate o LocalDateTime para o String desejado
+        return localDateTime.format(formatter);
     }
 }

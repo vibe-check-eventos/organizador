@@ -13,6 +13,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
 public class Profile extends AppCompatActivity {
 
     @Override
@@ -41,7 +46,7 @@ public class Profile extends AppCompatActivity {
         tvUpdatedAt.setText(prefs.getString("updated_at", "Não disponível"));
         tvDocument.setText(prefs.getInt("organizer_type", 0) == 1 ? prefs.getString("cpf", "Não disponível") : prefs.getString("cnpj", "Não disponível"));
         tvOrganizerType.setText((prefs.getInt("organizer_type", 0) == 1 ? "Pessoa Física" : "Pessoa Jurídica"));
-        tvCreatedAt.setText(prefs.getString("created_at", "Não disponível"));
+        tvCreatedAt.setText(convertIsoToDdMmYyyyHhSs(prefs.getString("created_at", "1970-01-01T00:00:00.000Z")));
         tvEmail.setText(prefs.getString("email", "Não disponível"));
 
 
@@ -73,5 +78,22 @@ public class Profile extends AppCompatActivity {
 
         // Aplica as mudanças de forma assíncrona (não bloqueia a UI).
         editor.apply();
+    }
+
+    public static String convertIsoToDdMmYyyyHhSs(String isoDateTime) {
+        // 1. Parse o String ISO 8601 para um Instant
+        Instant instant = Instant.parse(isoDateTime);
+
+        // 2. Converta o Instant para LocalDateTime no fuso horário desejado.
+        //    Se você quiser o horário local do dispositivo, use ZoneId.systemDefault().
+        //    Se você quiser uma representação no fuso horário de São Paulo, use "America/Sao_Paulo".
+        ZoneId zoneId = ZoneId.of("America/Sao_Paulo"); // Ou ZoneId.systemDefault();
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);
+
+        // 3. Defina o formato de saída
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"); // Note HH para 24h, hh para 12h AM/PM
+
+        // 4. Formate o LocalDateTime para o String desejado
+        return localDateTime.format(formatter);
     }
 }

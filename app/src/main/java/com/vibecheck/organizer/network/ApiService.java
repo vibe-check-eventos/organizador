@@ -12,8 +12,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-
-
 public class ApiService {
 
     // Interface para o callback de resposta (adaptei do exemplo GenericHttpClient)

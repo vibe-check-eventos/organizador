@@ -53,7 +53,21 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/input_shape"
-                android:hint="Data (dd/mm/aaaa hh:ss)"
+                android:hint="Data (dd/MM/yyyy)"
+                android:padding="12dp"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff"
+                android:focusable="false"
+                android:clickable="true" />
+
+            <EditText
+                android:id="@+id/etHoraEvento"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/input_shape"
+                android:hint="Hora (hh:mm)"
+                android:inputType="time"
                 android:padding="12dp"
                 android:textColor="#ffffff"
                 android:textColorHint="#ffffff" />
