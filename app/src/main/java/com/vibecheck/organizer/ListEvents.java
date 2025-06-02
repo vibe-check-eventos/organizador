@@ -263,6 +263,14 @@ public class ListEvents extends AppCompatActivity {
 
     }
 
+    public void linkToCreateEvent(View view){
+
+        Intent i = new Intent(ListEvents.this, CreateEvent.class);
+
+        startActivity(i);
+
+    }
+
     public void linkToQRCode(View view){
 
         Intent i = new Intent(ListEvents.this, QrCodeScannerActivity.class);
