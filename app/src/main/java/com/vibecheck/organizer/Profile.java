@@ -39,9 +39,11 @@ public class Profile extends AppCompatActivity {
         TextView tvOrganizerType = findViewById(R.id.tvOrganizerType);
         TextView tvCreatedAt = findViewById(R.id.tvCreatedAt);
         TextView tvEmail = findViewById(R.id.tvEmail);
+        TextView tvId = findViewById(R.id.tvId);
 
         SharedPreferences prefs = getSharedPreferences("user_data", MODE_PRIVATE);
         // Preencher os TextViews com os dados EXISTENTES
+        tvId.setText(Long.toString(prefs.getLong("id", -1L)));
         tvFullName.setText(prefs.getString("full_name", "Não disponível"));
         tvUpdatedAt.setText(prefs.getString("updated_at", "Não disponível"));
         tvDocument.setText(prefs.getInt("organizer_type", 0) == 1 ? prefs.getString("cpf", "Não disponível") : prefs.getString("cnpj", "Não disponível"));
