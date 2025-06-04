@@ -142,8 +142,8 @@ public class Login extends AppCompatActivity {
                     if (responseMap.containsKey("updated_at")) {
                         editor.putString("updated_at", (String) responseMap.get("updated_at"));
                     }
-                    if (responseMap.containsKey("created_at")) {
-                        editor.putString("created_at", (String) responseMap.get("created_at"));
+                    if (responseMap.containsKey("date")) {
+                        editor.putString("date", (String) responseMap.get("date"));
                     }
                     if (responseMap.containsKey("id")) {
                         if (responseMap.get("id") instanceof Number) {

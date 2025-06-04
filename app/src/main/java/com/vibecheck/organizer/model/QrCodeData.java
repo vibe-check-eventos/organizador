@@ -16,7 +16,7 @@ public class QrCodeData {
     @JsonProperty("qr_code_base64")
     public String qrCodeBase64;
 
-    @JsonProperty("created_at")
+    @JsonProperty("date")
     public String createdAt;
 
     @JsonProperty("updated_at")

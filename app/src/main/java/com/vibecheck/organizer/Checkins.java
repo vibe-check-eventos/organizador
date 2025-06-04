@@ -19,13 +19,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.Date;
+import java.util.Locale; // Import Locale for SimpleDateFormat
+import java.util.TimeZone; // Import TimeZone for SimpleDateFormat
 
 public class Checkins extends AppCompatActivity {
 
@@ -60,8 +59,7 @@ public class Checkins extends AppCompatActivity {
             return;
         }
 
-        Executor mainExecutor = this::runOnUiThread;
-        apiService = new ApiService(mainExecutor);
+        apiService = new ApiService(this::runOnUiThread);
 
         fetchCheckins(registrationId);
     }
@@ -76,29 +74,34 @@ public class Checkins extends AppCompatActivity {
                     JSONArray jsonArray = new JSONArray(responseBody);
                     checkinList.clear();
 
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject checkinObj = jsonArray.getJSONObject(i);
-                        String createdAt = checkinObj.getString("created_at");
+                    // Verifica se o array JSON está vazio
+                    if (jsonArray.length() == 0) {
+                        Toast.makeText(Checkins.this, "Nenhum dado de check-in encontrado para esta inscrição.", Toast.LENGTH_LONG).show();
+                    } else {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject checkinObj = jsonArray.getJSONObject(i);
+                            // Correctly get "created_at"
+                            String createdAt = checkinObj.getString("created_at");
 
-                        JSONObject registrationObj = checkinObj.getJSONObject("registration");
-                        JSONObject participantObj = registrationObj.getJSONObject("participant");
-                        String participantName = participantObj.getString("name");
+                            JSONObject registrationObj = checkinObj.getJSONObject("registration");
+                            JSONObject participantObj = registrationObj.getJSONObject("participant");
+                            String participantName = participantObj.getString("name");
 
-                        JSONObject eventObj = registrationObj.getJSONObject("event");
-                        String eventName = eventObj.getString("name");
+                            JSONObject eventObj = registrationObj.getJSONObject("event");
+                            String eventName = eventObj.getString("name");
 
-                        String item =
-                                "Check-in: " + convertIsoToDdMmYyyyHhSs(createdAt) + "\n" +
-                                "Participante: " + participantName + "\n" +
-                                "Evento: " + eventName;
+                            String item =
+                                    "Check-in: " + convertIsoToDdMmYyyyHhMm(createdAt) + "\n" +
+                                            "Participante: " + participantName + "\n" +
+                                            "Evento: " + eventName;
 
-                        checkinList.add(item);
+                            checkinList.add(item);
+                        }
                     }
-
                     adapter.notifyDataSetChanged();
 
                 } catch (JSONException e) {
-                    Toast.makeText(Checkins.this, "Erro ao processar dados", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Checkins.this, "Erro ao processar dados: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
             }
@@ -115,20 +118,32 @@ public class Checkins extends AppCompatActivity {
         });
     }
 
-    public static String convertIsoToDdMmYyyyHhSs(String isoDateTime) {
-        // 1. Parse o String ISO 8601 para um Instant
-        Instant instant = Instant.parse(isoDateTime);
+    /**
+     * Converte uma string de data e hora do formato ISO 8601 (e.g., "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
+     * para o formato "dd/MM/yyyy HH:mm" no fuso horário local do dispositivo.
+     *
+     * @param isoDateString A string de data e hora no formato ISO 8601.
+     * @return A string de data e hora formatada como "dd/MM/yyyy HH:mm", ou null se o formato de entrada for inválido.
+     */
+    public static String convertIsoToDdMmYyyyHhMm(String isoDateString) {
+        // Define o formato de entrada para ISO 8601 com milissegundos e 'Z' para UTC
+        SimpleDateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.getDefault());
+        inputFormatter.setTimeZone(TimeZone.getTimeZone("UTC")); // Indica que a string de entrada está em UTC
 
-        // 2. Converta o Instant para LocalDateTime no fuso horário desejado.
-        //    Se você quiser o horário local do dispositivo, use ZoneId.systemDefault().
-        //    Se você quiser uma representação no fuso horário de São Paulo, use "America/Sao_Paulo".
-        ZoneId zoneId = ZoneId.of("America/Sao_Paulo"); // Ou ZoneId.systemDefault();
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);
+        Date date;
+        try {
+            // Parse a String de entrada para um objeto Date
+            date = inputFormatter.parse(isoDateString);
+        } catch (ParseException e) {
+            System.err.println("Erro ao parsear a data ISO: " + isoDateString + ". Erro: " + e.getMessage());
+            return null;
+        }
 
-        // 3. Defina o formato de saída
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"); // Note HH para 24h, hh para 12h AM/PM
+        // Define o formato de saída para o fuso horário local do dispositivo
+        SimpleDateFormat outputFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+        // Não é necessário definir o fuso horário para o outputFormatter, ele usa o default do dispositivo
 
-        // 4. Formate o LocalDateTime para o String desejado
-        return localDateTime.format(formatter);
+        // Formate o objeto Date para o String desejado
+        return outputFormatter.format(date);
     }
 }

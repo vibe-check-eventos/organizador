@@ -98,11 +98,13 @@ public class CreateEvent extends AppCompatActivity {
 
         try {
             java.text.SimpleDateFormat formatoEntrada = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm");
-            java.text.SimpleDateFormat formatoSaida = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            java.text.SimpleDateFormat formatoSaida = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm");
             formatoEntrada.setLenient(false);
 
             dateEvento = formatoEntrada.parse(dataHora);
             dataHoraConvertida = formatoSaida.format(dateEvento);
+
+            Log.d("DATA HORA CRIAR EVENTO", dataHoraConvertida);
 
             // Validação: data e hora não podem ser anteriores a agora
             java.util.Date agora = new java.util.Date();
@@ -144,7 +146,9 @@ public class CreateEvent extends AppCompatActivity {
                     eventoJson.put("description", descricao);
                     eventoJson.put("event_address_id", eventAddressId);
                     eventoJson.put("is_active", true);
-                    eventoJson.put("created_at", dataHoraConvertida);
+                    eventoJson.put("date", dataHoraConvertida);
+
+
 
                     apiService.post(BASE_URL + "/events", eventoJson.toString(), new ApiService.ApiResponseCallback() {
                         @Override

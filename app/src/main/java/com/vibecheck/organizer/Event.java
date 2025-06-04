@@ -208,7 +208,7 @@ public class Event extends AppCompatActivity {
         if (eventData == null) return;
 
         String nome = eventData.get("name") != null ? eventData.get("name").toString() : "";
-        String data = eventData.get("created_at") != null ? eventData.get("created_at").toString() : "";
+        String data = eventData.get("date") != null ? eventData.get("date").toString() : "";
 
         // Endereço
         Map<String, Object> eventAddress = (Map<String, Object>) eventData.get("event_address");
@@ -228,7 +228,7 @@ public class Event extends AppCompatActivity {
         String description = eventData.get("description") != null ? eventData.get("description").toString() : "";
 
         edtEventName.setText(nome);
-        edtEventData.setText(convertIsoToDdMmYyyyHhSs(data));
+        edtEventData.setText(convertYyyyMmDdHhSsToDdMmYyyyHhMm(data));
         edtEventLocal.setText(endereco);
         edtEventDescription.setText(description);
     }
@@ -321,21 +321,33 @@ public class Event extends AppCompatActivity {
         });
     }
 
-    public static String convertIsoToDdMmYyyyHhSs(String isoDateTime) {
-        // 1. Parse o String ISO 8601 para um Instant
-        Instant instant = Instant.parse(isoDateTime);
+    /**
+     * Converte uma string de data e hora do formato "yyyy-MM-dd HH:mm:ss"
+     * para o formato "dd/MM/yyyy HH:mm".
+     *
+     * @param yyyyMmDdHhSs A string de data e hora no formato "yyyy-MM-dd HH:mm:ss".
+     * @return A string de data e hora formatada como "dd/MM/yyyy HH:mm", ou null se o formato de entrada for inválido.
+     */
+    public static String convertYyyyMmDdHhSsToDdMmYyyyHhMm(String yyyyMmDdHhSs) {
+        // 1. Defina o formato de entrada
+        // Use "HH" para formato de 24 horas, "hh" para 12 horas com AM/PM
+        SimpleDateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        // 2. Converta o Instant para LocalDateTime no fuso horário desejado.
-        //    Se você quiser o horário local do dispositivo, use ZoneId.systemDefault().
-        //    Se você quiser uma representação no fuso horário de São Paulo, use "America/Sao_Paulo".
-        ZoneId zoneId = ZoneId.of("America/Sao_Paulo"); // Ou ZoneId.systemDefault();
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);
+        Date date;
+        try {
+            // 2. Parse a String de entrada para um objeto Date
+            date = inputFormatter.parse(yyyyMmDdHhSs);
+        } catch (ParseException e) {
+            // Lida com o erro se a string de entrada não corresponder ao formato esperado
+            System.err.println("Erro ao parsear a data: " + yyyyMmDdHhSs + ". Formato esperado: yyyy-MM-dd HH:mm:ss");
+            return null; // Retorna null ou lança uma exceção, dependendo da sua necessidade de tratamento de erro
+        }
 
         // 3. Defina o formato de saída
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"); // Note HH para 24h, hh para 12h AM/PM
+        SimpleDateFormat outputFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
-        // 4. Formate o LocalDateTime para o String desejado
-        return localDateTime.format(formatter);
+        // 4. Formate o objeto Date para o String desejado
+        return outputFormatter.format(date);
     }
 
 }

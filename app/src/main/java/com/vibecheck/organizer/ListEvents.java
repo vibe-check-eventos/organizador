@@ -25,11 +25,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vibecheck.organizer.network.ApiService;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -186,14 +190,14 @@ public class ListEvents extends AppCompatActivity {
                             if (address.isEmpty()) address = "Endereço Indisponível";
                         }
 
-                        String createdAt = (String) eventMap.get("created_at");
+                        String createdAt = (String) eventMap.get("date");
 
                         String itemText =
                                 "ID: " + (id != null ? String.valueOf(id) : "N/A") + "\n" +
                                 "Nome: " + (name != null ? name : "N/A") + "\n" +
                                 //"Capacidade: " + capacity + "\n" +
                                 "Endereço: " + address + "\n" +
-                                "Data: " + convertIsoToDdMmYyyyHhSs(createdAt);
+                                "Data: " + convertYyyyMmDdHhSsToDdMmYyyyHhMm(createdAt);
 
                         dadosFormatados.add(itemText);
                     }
@@ -301,20 +305,33 @@ public class ListEvents extends AppCompatActivity {
         editor.apply();
     }
 
-    public static String convertIsoToDdMmYyyyHhSs(String isoDateTime) {
-        // 1. Parse o String ISO 8601 para um Instant
-        Instant instant = Instant.parse(isoDateTime);
+    /**
+     * Converte uma string de data e hora do formato "yyyy-MM-dd HH:mm:ss"
+     * para o formato "dd/MM/yyyy HH:mm".
+     *
+     * @param yyyyMmDdHhSs A string de data e hora no formato "yyyy-MM-dd HH:mm:ss".
+     * @return A string de data e hora formatada como "dd/MM/yyyy HH:mm", ou null se o formato de entrada for inválido.
+     */
+    public static String convertYyyyMmDdHhSsToDdMmYyyyHhMm(String yyyyMmDdHhSs) {
+        // 1. Defina o formato de entrada
+        // Use "HH" para formato de 24 horas, "hh" para 12 horas com AM/PM
+        SimpleDateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        // 2. Converta o Instant para LocalDateTime no fuso horário desejado.
-        //    Se você quiser o horário local do dispositivo, use ZoneId.systemDefault().
-        //    Se você quiser uma representação no fuso horário de São Paulo, use "America/Sao_Paulo".
-        ZoneId zoneId = ZoneId.of("America/Sao_Paulo"); // Ou ZoneId.systemDefault();
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);
+        Date date;
+        try {
+            // 2. Parse a String de entrada para um objeto Date
+            date = inputFormatter.parse(yyyyMmDdHhSs);
+        } catch (ParseException e) {
+            // Lida com o erro se a string de entrada não corresponder ao formato esperado
+            System.err.println("Erro ao parsear a data: " + yyyyMmDdHhSs + ". Formato esperado: yyyy-MM-dd HH:mm:ss");
+            return null; // Retorna null ou lança uma exceção, dependendo da sua necessidade de tratamento de erro
+        }
 
         // 3. Defina o formato de saída
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"); // Note HH para 24h, hh para 12h AM/PM
+        SimpleDateFormat outputFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
-        // 4. Formate o LocalDateTime para o String desejado
-        return localDateTime.format(formatter);
+        // 4. Formate o objeto Date para o String desejado
+        return outputFormatter.format(date);
     }
+
 }
